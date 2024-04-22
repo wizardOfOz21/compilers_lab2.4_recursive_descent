@@ -1,5 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Cпециальные значения распознаются корректно 1`] = `"NIL (1,1): NIL"`;
+
+exports[`Cпециальные значения распознаются корректно 2`] = `"undefined (1,5): undefined"`;
+
 exports[`Идентификатор распознается 1`] = `"IDENTIFIER (1,1): testCounter1"`;
 
 exports[`Конец строки распознается 1`] = `"EOF (-1,-1): "`;

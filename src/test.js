@@ -1,4 +1,4 @@
-import { controlSymbols, lexemList } from "./config";
+import { controlSymbols, lexemList, specialValues } from "./config";
 import Lexer, { Token } from "./Lexer";
 
 test("Идентификатор распознается", () => {
@@ -20,26 +20,6 @@ test("Целые беззнаковые числа распознаются", ()
 
 test("Числа с плавающей точкой распознаются", () => {
     const data = "1E+11 42E-11 42E11 42.11E+11 42.11E-11 42.11E11";
-    let lexer = new Lexer(data, lexemList);
-    let token = lexer.parse();
-    while (!token.isEof()) {
-        expect(token.toString()).toMatchSnapshot();
-        token = lexer.parse();
-    }
-});
-
-test("Строки распознаются", () => {
-    const data = "'adsas' 'hello world!' ";
-    let lexer = new Lexer(data, lexemList);
-    let token = lexer.parse();
-    while (!token.isEof()) {
-        expect(token.toString()).toMatchSnapshot();
-        token = lexer.parse();
-    }
-});
-
-test("Управляющие символы в строках не распознаются", () => {
-    const data = "'\nsdfsd'";
     let lexer = new Lexer(data, lexemList);
     let token = lexer.parse();
     while (!token.isEof()) {
@@ -74,4 +54,34 @@ test("Строки считаются после \\r\\n корректно", () 
     let lexer = new Lexer(data, lexemList);
     let lexem = lexer.parse();
     expect(lexem.toString()).toMatchSnapshot();
+});
+
+test("Строки распознаются", () => {
+    const data = "'adsas' 'hello world!' ";
+    let lexer = new Lexer(data, lexemList);
+    let token = lexer.parse();
+    while (!token.isEof()) {
+        expect(token.toString()).toMatchSnapshot();
+        token = lexer.parse();
+    }
+});
+
+test("Управляющие символы в строках не распознаются", () => {
+    const data = "'\nsdfsd'";
+    let lexer = new Lexer(data, lexemList);
+    let token = lexer.parse();
+    while (!token.isEof()) {
+        expect(token.toString()).toMatchSnapshot();
+        token = lexer.parse();
+    }
+});
+
+test("Cпециальные значения распознаются корректно", () => {
+    const data = specialValues.join(' ');
+    let lexer = new Lexer(data, lexemList);
+    let token = lexer.parse();
+    while (!token.isEof()) {
+        expect(token.toString()).toMatchSnapshot();
+        token = lexer.parse();
+    }
 });
