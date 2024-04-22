@@ -31,15 +31,12 @@ function getKeyWords(keyWords: {[key: string]: string}): LexemList {
 const lexemDefinition = {
     IDENTIFIER: /\p{L}\w*/,
     UNSIGNED_NUMBER: /[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?/,
+    STRING: /'[^\p{Cc}]*?'/,
 
     NEWLINE: /\n/,
     NEWLINE_R: /\r\n/,
     SPACE: /[^\S\r\n]+/,
     ...getKeyWords(keyWords),
-    SYMBOL_QUOTE: /""""/,
-    SYMBOL: /"[^\p{Cc}]"/,
-    CONTROL_SYMBOL_NUMERIC: /\$([0-9]|[0-2][0-9]|30|31)\$/,
-    CONTROL_SYMBOL_ALPHABETIC: getControlsRegex(),
 };
 
 export const lexemList: LexemList = (() => {
