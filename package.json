@@ -5,6 +5,7 @@
   "main": "lab5.js",
   "scripts": {
     "test": "jest",
+    "testc": "jest -u",
     "build": "webpack --mode development --watch",
     "run": "node dist/bundle.js"
   },

@@ -49,7 +49,9 @@ function getNumbers() {
 }
 
 const lexemDefinition = {
-    IDENT: /\p{L}\w*/,
+    IDENTIFIER: /\p{L}\w*/,
+    INTEGER: /[0-9][0-9]*/,
+
     NEWLINE: /\n/,
     NEWLINE_R: /\r\n/,
     SPACE: /[^\S\r\n]+/,
