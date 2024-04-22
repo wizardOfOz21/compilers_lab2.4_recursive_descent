@@ -119,7 +119,6 @@ class Lexer {
             return this.parse();
         }
         value = groups[lexem];
-        console.log(lexem);
         this.step(value.length);
         let col = this.col;
         this.col += value.length;
