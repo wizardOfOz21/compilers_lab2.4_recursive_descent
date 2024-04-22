@@ -9,8 +9,8 @@ export function lexemFormat(token: Token) {
 
 function print(lexer: Lexer) {
     let token: Token = lexer.parse();
-    while (token.isEof) {
-        if (token.isError) {
+    while (!token.isEof()) {
+        if (token.isError()) {
             console.log(`syntax error (${token.pos.row},${token.pos.col})`);
         } else {
             console.log(token.toString());

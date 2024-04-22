@@ -1,5 +1,5 @@
 import { controlSymbols, lexemList } from "./config";
-import Lexer from "./Lexer";
+import Lexer, { Token } from "./Lexer";
 
 test("Управляющий символ в кавычках не распознается", () => {
     const data = '   \"\n\"    ';
@@ -15,11 +15,24 @@ test("Идентификатор распознается", () => {
     expect(lexem.toString()).toMatchSnapshot();
 });
 
-test("Число распознается", () => {
-    const data = "011010";
+test("Целые беззнаковые числа распознаются", () => {
+    const data = "011010 123 456 1 0";
     let lexer = new Lexer(data, lexemList);
-    let lexem = lexer.parse();
-    expect(lexem.toString()).toMatchSnapshot();
+    let token = lexer.parse();
+    while (!token.isEof()) {
+        expect(token.toString()).toMatchSnapshot();
+        token = lexer.parse();
+    }
+});
+
+test("Числа с плавающей точкой распознаются", () => {
+    const data = "1E+11 42E-11 42E11 42.11E+11 42.11E-11 42.11E11";
+    let lexer = new Lexer(data, lexemList);
+    let token = lexer.parse();
+    while (!token.isEof()) {
+        expect(token.toString()).toMatchSnapshot();
+        token = lexer.parse();
+    }
 });
 
 test("Конец строки распознается", () => {

@@ -28,29 +28,9 @@ function getKeyWords(keyWords: {[key: string]: string}): LexemList {
     return lexemList;
 }
 
-function getNumbers() {
-    const template = (base: number) => {
-        if (base < 11) {
-            const symbol = `[0-${base-1}]`;
-            return `${symbol}${symbol}*\\{${base}\\}`;
-        }
-        const lastCharUpper = String.fromCharCode(54 + base);
-        const lastCharLower = lastCharUpper.toLowerCase();
-        const symbol = `[0-9a-${lastCharLower}A-${lastCharUpper}]`;
-        return `${symbol}${symbol}*\\{${base}\\}`;
-    }
-    const lexemList: LexemList = {};
-    for (let i = 2; i < 37; i++) {
-        const name = `NUMBER_${i}`;
-        lexemList[name] = new RegExp(template(i));
-    }
-    lexemList.NUMBER = new RegExp(`[0-9][0-9]*`);
-    return lexemList;
-}
-
 const lexemDefinition = {
     IDENTIFIER: /\p{L}\w*/,
-    INTEGER: /[0-9][0-9]*/,
+    UNSIGNED_NUMBER: /[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?/,
 
     NEWLINE: /\n/,
     NEWLINE_R: /\r\n/,
@@ -60,7 +40,6 @@ const lexemDefinition = {
     SYMBOL: /"[^\p{Cc}]"/,
     CONTROL_SYMBOL_NUMERIC: /\$([0-9]|[0-2][0-9]|30|31)\$/,
     CONTROL_SYMBOL_ALPHABETIC: getControlsRegex(),
-    ...getNumbers(),
 };
 
 export const lexemList: LexemList = (() => {
