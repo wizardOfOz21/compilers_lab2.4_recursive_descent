@@ -7,19 +7,44 @@ export interface LexemList {
 export const EOF: string = "EOF";
 export const ERROR: string = "ERROR";
 export const NEWLINE: string = "NEWLINE";
+export const NEWLINE_R: string = "NEWLINE_R";
 export const SPACE: string = "SPACE";
 
-export interface Lexem {
-    type: string,
-    value: any,
-    col: number,
-    row: number,
+export class Position {
+    constructor(
+        public row: number,
+        public col: number,
+    ) {}
+
+    toString() {
+        return `(${this.row},${this.col})`;
+    }
+}
+
+export class Token {
+    constructor(
+        public type: string,
+        public value: any,
+        public pos: Position
+    ) {}
+
+    toString() {
+        return `${this.type} ${this.pos.toString()}: ${this.value}`;
+    }
+
+    isEof() {
+        return this.type === EOF;
+    }
+
+    isError() {
+        return this.type === ERROR;
+    }
 }
 
 const defaultLexems = {
     [NEWLINE]: new RegExp(`(?<${NEWLINE}>\\n)`),
     [SPACE]: new RegExp(`(?<${SPACE}>[^\\S\\r\\n]+)`),
-}
+};
 
 function combine(lexems: LexemList): RegExp {
     const source: string = Object.values(lexems).reduce(
@@ -29,43 +54,39 @@ function combine(lexems: LexemList): RegExp {
     return new RegExp(`^(${source.slice(1)})`, "u");
 }
 
-enum LexerState {
-    INITIAL,
-    STRING,
-}
-
 class Lexer {
     private lexems: string[];
     private regex: RegExp;
     private row: number;
     private col: number;
     private error: boolean;
-    private state: LexerState;
+    private input: string
 
-    constructor(
-        private input: string,
-        lexems: LexemList,
-    ) {
-        this.lexems = {...defaultLexems, ...Object.keys(lexems)};
+    constructor(input: string, lexems: LexemList) {
+        this.input = input;
+        this.lexems = { ...defaultLexems, ...Object.keys(lexems) };
         this.regex = combine(lexems);
         this.row = 1;
         this.col = 1;
         this.error = false;
-        this.state = LexerState.INITIAL;
     }
 
     step(length: number) {
         this.input = this.input.slice(length);
     }
 
-    parse(): Lexem {
+    parse(): Token {
         if (this.input == "") {
-            return { type: EOF, value: "", row: -1, col: -1 };
+            return new Token(EOF, "", new Position(-1, -1));
         }
         let matchResult = match(this.input, this.regex);
         let value = matchResult && matchResult.input;
         let groups = matchResult && matchResult.groups;
-        let lexem = groups && Object.keys(groups).find((key) => !!groups[key] || groups[key] == '');
+        let lexem =
+            groups &&
+            Object.keys(groups).find(
+                (key) => !!groups[key] || groups[key] == ""
+            );
 
         if (!matchResult) {
             let col = this.col;
@@ -75,12 +96,7 @@ class Lexer {
                 return this.parse();
             } else {
                 this.error = true;
-                return {
-                    type: ERROR,
-                    value: "",
-                    row: this.row,
-                    col,
-                };
+                return new Token(ERROR, "", new Position(this.row,col));
             }
         }
         if (this.error) {
@@ -88,6 +104,11 @@ class Lexer {
         }
         if (lexem == NEWLINE) {
             this.step(1);
+            this.row += 1;
+            this.col = 1;
+            return this.parse();
+        } else if (lexem == NEWLINE_R) {
+            this.step(2);
             this.row += 1;
             this.col = 1;
             return this.parse();
@@ -102,9 +123,9 @@ class Lexer {
         this.step(value.length);
         let col = this.col;
         this.col += value.length;
-        
-        return { type: lexem, value, row: this.row, col };
+
+        return new Token(lexem, value, new Position(this.row, col));
     }
 }
 
-export default Lexer
+export default Lexer;

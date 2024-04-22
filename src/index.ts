@@ -1,21 +1,21 @@
 import { lexemList } from "./config";
-import Lexer, {EOF, ERROR, Lexem} from "./Lexer";
+import Lexer, {EOF, ERROR, Token} from "./Lexer";
 
 const fs = require("node:fs");
 
-export function lexemFormat(lexem: Lexem) {
-    return `${lexem.type} (${lexem.row},${lexem.col}): ${lexem.value}`;
+export function lexemFormat(token: Token) {
+    return `${token.type} (${token.pos.row},${token.pos.col}): ${token.value}`;
 }
 
 function print(lexer: Lexer) {
-    let lexem: Lexem = lexer.parse();
-    while (lexem.type != EOF) {
-        if (lexem.type == ERROR) {
-            console.log(`syntax error (${lexem.row},${lexem.col})`);
+    let token: Token = lexer.parse();
+    while (token.isEof) {
+        if (token.isError) {
+            console.log(`syntax error (${token.pos.row},${token.pos.col})`);
         } else {
-            console.log(lexemFormat(lexem));
+            console.log(token.toString());
         }
-        lexem = lexer.parse();
+        token = lexer.parse();
     }
 }
 

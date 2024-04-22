@@ -48,12 +48,10 @@ function getNumbers() {
     return lexemList;
 }
 
-function getStringRegex() {
-    const controls = Object.keys(controlSymbols).join('|');
-    return new RegExp(`(?<STRING>(('[^\p{Cc}']*')?|(%AP%.*%AP%)?|(${controls})?))`)
-}
-
 export const lexemList: LexemList = {
+    NEWLINE: /(?<NEWLINE>\n)/,
+    NEWLINE_R: /(?<NEWLINE_R>\r\n)/,
+    SPACE: /(?<SPACE>[^\S\r\n]+)/,
     ...getKeyWords(keyWords),
     IDENT: /(?<IDENT>(_|!|@|\.|#)\p{L}\w*)/,
     SYMBOL_QUOTE: /(?<SYMBOL_QUOTE>"""")/,
@@ -61,9 +59,6 @@ export const lexemList: LexemList = {
     CONTROL_SYMBOL_NUMERIC: /(?<CONTROL_SYMBOL_NUMERIC>\$([0-9]|[0-2][0-9]|30|31)\$)/,
     CONTROL_SYMBOL_ALPHABETIC: getControlsRegex(),
     ...getNumbers(),
-    STRING: getStringRegex(),
-
-    // NUMBER: /(?<NUMBER>\p{N}[A-Fa-f0-9]*h)/,
 };
 
 console.log(lexemList);
