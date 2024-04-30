@@ -45,9 +45,4 @@ export const lexemDefinition: LexemMap = {
     IDENTIFIER: /\p{L}\w*/u,
     UNSIGNED_NUMBER: /[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?/,
     STRING: /'[^\p{Cc}]*?'/u,
-    
-    COMMENT: /\{[^}]*\}/u,
-    NEWLINE: /\n/,
-    NEWLINE_R: /\r\n/,
-    SPACE: /[^\S\r\n]+/,
 };

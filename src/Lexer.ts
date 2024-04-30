@@ -8,13 +8,19 @@ export const NEWLINE = "NEWLINE";
 export const NEWLINE_R = "NEWLINE_R";
 export const SPACE = "SPACE";
 
+export const ignoreLexems: LexemMap = {
+    SPACE: /[^\S\r\n]+/,
+    COMMENT_1: /\{[^}]*\}/u,
+    COMMENT_2: /\(\*((?!\*\))[\s\S])*\*\)/u,
+}
+
 const defaultLexems: LexemMap = {
     NEWLINE: /\n/,
     NEWLINE_R: /\r\n/,
-    SPACE: /[^\S\r\n]+/,
 };
 
 class Lexer {
+    private ignore: string[];
     private lexems: string[];
     private regex: RegExp;
     private row: number;
@@ -28,8 +34,12 @@ class Lexer {
 
     constructor(input: string, lexems: LexemMap) {
         this.input = input;
-        this.lexems = { ...Object.keys(defaultLexems), ...Object.keys(lexems) };
-        this.regex = alternativeCombine(this.getRegex(lexems), "u");
+        this.lexems = {
+            ...Object.keys(defaultLexems),
+            ...Object.keys(lexems),
+            ...Object.keys(ignoreLexems),
+        };
+        this.regex = alternativeCombine(this.getRegex({...ignoreLexems, ...lexems}), "u");
         this.row = 1;
         this.col = 1;
         this.error = false;
@@ -76,7 +86,7 @@ class Lexer {
             this.row += 1;
             this.col = 1;
             return this.parse();
-        } else if (lexem == SPACE) {
+        } else if (lexem in ignoreLexems) {
             value = groups[lexem];
             this.step(value.length);
             this.col += value.length;

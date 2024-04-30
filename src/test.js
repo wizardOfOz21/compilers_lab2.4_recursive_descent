@@ -123,13 +123,37 @@ test("Распознается самая длинная лексема", () => 
     }
 });
 
+const lexerTest = [
+    "a 123 {232 * 3\\\n\n} 1e15",
+    "a 123 (*323\*()()*) 1e15",
+    "a 123 (*323\*()(\n\n)*) 1e15",
+];
 
-test("CONST A = - 1", () => {
-    const data = "CONST A = - 1";
-    let lexer = new Lexer(data, lexemDefinition);
-    let parser = new Parser(lexer);
+lexerTest.forEach((input) => {
+    test(input, () => {
+        let lexer = new Lexer(input, lexemDefinition);
+        let token = lexer.parse();
+        while (!token.isEof()) {
+            expect(token.toString()).toMatchSnapshot();
+            token = lexer.parse();
+        }
+    });
+})
 
-    const prog = parser.parse();
+const parserTest = [
+    "CONST A = - 1",
+    "CONST A = - 1; B = + 5",
+    "CONST a = 1; CONST b = 1e5",
+    "CONST a = 1;;;",
+]
 
-    expect(printGrpah(prog)).toMatchSnapshot();
-});
+parserTest.forEach((input) => {
+    test(input, () => {
+        let lexer = new Lexer(input, lexemDefinition);
+        let parser = new Parser(lexer);
+    
+        const prog = parser.parse();
+    
+        expect(printGrpah(prog)).toMatchSnapshot();
+    });
+})

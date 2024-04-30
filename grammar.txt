@@ -1,6 +1,6 @@
 program ::= (type_block | constant_block)*
-type_block ::= 'TYPE' type_definition (; type_definition)*
-constant_block ::= 'CONST' constant_definition (; constant_definition)*
+type_block ::= 'TYPE' type_definition (; type_definition?)*
+constant_block ::= 'CONST' constant_definition (; constant_definition?)*
 
 // Определение константы
 

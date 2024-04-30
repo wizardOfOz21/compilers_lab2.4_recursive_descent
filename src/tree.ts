@@ -44,7 +44,7 @@ export function printGraphRec(node, graph: {str: string, id: number}, parent?: n
                 const element = prop[i];
                 if (element instanceof Token) {
                     const token_id = graph.id++;
-                    graph.str += `${token_id}[label="${element.type}:${element.value}"];\n`
+                    graph.str += `${token_id}[label="${element.value}"];\n`
                     graph.str += `${id} -> ${token_id}[label="${key}[${i}]"];\n`
                     continue;
                 }
@@ -56,7 +56,7 @@ export function printGraphRec(node, graph: {str: string, id: number}, parent?: n
 
         if (prop.constructor.name === 'Token') {
             const token_id = graph.id++;
-            graph.str += `${token_id}[label="${prop.type}:${prop.value}"];\n`
+            graph.str += `${token_id}[label="${prop.value}"];\n`
             graph.str += `${id} -> ${token_id}[label="${key}"];\n`
             continue;
         }

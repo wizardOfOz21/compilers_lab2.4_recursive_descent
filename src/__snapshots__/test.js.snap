@@ -7,16 +7,93 @@ exports[`CONST A = - 1 1`] = `
 1[label="ConstantBlock"];
 1 -> 2[label="defs[0]"];
 2[label="ConstantDefinition"];
-3[label="IDENTIFIER:A"];
+3[label="A"];
 2 -> 3[label="ident"];
 2 -> 4[label="constant"];
 4[label="SignedConstant"];
-5[label="MINUS:-"];
+5[label="-"];
 4 -> 5[label="sign"];
 4 -> 6[label="value"];
 6[label="UnsignedConstant"];
-7[label="UNSIGNED_NUMBER:1"];
+7[label="1"];
 6 -> 7[label="value"];
+}
+"
+`;
+
+exports[`CONST A = - 1; B = + 5 1`] = `
+"digraph graph1 {
+0[label="Program"];
+0 -> 1[label="blocks[0]"];
+1[label="ConstantBlock"];
+1 -> 2[label="defs[0]"];
+2[label="ConstantDefinition"];
+3[label="A"];
+2 -> 3[label="ident"];
+2 -> 4[label="constant"];
+4[label="SignedConstant"];
+5[label="-"];
+4 -> 5[label="sign"];
+4 -> 6[label="value"];
+6[label="UnsignedConstant"];
+7[label="1"];
+6 -> 7[label="value"];
+1 -> 8[label="defs[1]"];
+8[label="ConstantDefinition"];
+9[label="B"];
+8 -> 9[label="ident"];
+8 -> 10[label="constant"];
+10[label="SignedConstant"];
+11[label="+"];
+10 -> 11[label="sign"];
+10 -> 12[label="value"];
+12[label="UnsignedConstant"];
+13[label="5"];
+12 -> 13[label="value"];
+}
+"
+`;
+
+exports[`CONST a = 1; CONST b = 1e5 1`] = `
+"digraph graph1 {
+0[label="Program"];
+0 -> 1[label="blocks[0]"];
+1[label="ConstantBlock"];
+1 -> 2[label="defs[0]"];
+2[label="ConstantDefinition"];
+3[label="a"];
+2 -> 3[label="ident"];
+2 -> 4[label="constant"];
+4[label="UnsignedConstant"];
+5[label="1"];
+4 -> 5[label="value"];
+0 -> 6[label="blocks[1]"];
+6[label="ConstantBlock"];
+6 -> 7[label="defs[0]"];
+7[label="ConstantDefinition"];
+8[label="b"];
+7 -> 8[label="ident"];
+7 -> 9[label="constant"];
+9[label="UnsignedConstant"];
+10[label="1e5"];
+9 -> 10[label="value"];
+}
+"
+`;
+
+exports[`CONST a = 1;;; 1`] = `
+"digraph graph1 {
+0[label="Program"];
+0 -> 1[label="blocks[0]"];
+1[label="ConstantBlock"];
+1 -> 2[label="defs[0]"];
+2[label="ConstantDefinition"];
+3[label="a"];
+2 -> 3[label="ident"];
+2 -> 4[label="constant"];
+4[label="UnsignedConstant"];
+5[label="1"];
+4 -> 5[label="value"];
 }
 "
 `;
@@ -44,6 +121,36 @@ exports[`Cпециальные значения распознаются кор�
 exports[`Cпециальные значения распознаются корректно 11`] = `"CASE (1,50): CASE"`;
 
 exports[`Cпециальные значения распознаются корректно 12`] = `"CONST (1,55): CONST"`;
+
+exports[`a 123 (*323*()(
+
+)*) 1e15 1`] = `"IDENTIFIER (1,1): a"`;
+
+exports[`a 123 (*323*()(
+
+)*) 1e15 2`] = `"UNSIGNED_NUMBER (1,3): 123"`;
+
+exports[`a 123 (*323*()(
+
+)*) 1e15 3`] = `"UNSIGNED_NUMBER (1,22): 1e15"`;
+
+exports[`a 123 (*323*()()*) 1e15 1`] = `"IDENTIFIER (1,1): a"`;
+
+exports[`a 123 (*323*()()*) 1e15 2`] = `"UNSIGNED_NUMBER (1,3): 123"`;
+
+exports[`a 123 (*323*()()*) 1e15 3`] = `"UNSIGNED_NUMBER (1,20): 1e15"`;
+
+exports[`a 123 {232 * 3\\
+
+} 1e15 1`] = `"IDENTIFIER (1,1): a"`;
+
+exports[`a 123 {232 * 3\\
+
+} 1e15 2`] = `"UNSIGNED_NUMBER (1,3): 123"`;
+
+exports[`a 123 {232 * 3\\
+
+} 1e15 3`] = `"UNSIGNED_NUMBER (1,20): 1e15"`;
 
 exports[`Идентификатор распознается 1`] = `"IDENTIFIER (1,1): testCounter1"`;
 

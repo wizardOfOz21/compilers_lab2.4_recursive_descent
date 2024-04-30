@@ -10,6 +10,8 @@ import {
     UnsignedConstant,
 } from "./tree";
 
+const CONST = "CONST"
+const TYPE = "TYPE"
 const IDENT = "IDENTIFIER";
 const SEMICOLON = "SEMICOLON";
 const UNSIGNED_NUMBER = "UNSIGNED_NUMBER";
@@ -52,8 +54,8 @@ class Parser {
 
     program(): Program {
         const blocks: (ConstantBlock | TypeBlock)[] = [];
-        while (this.is("TYPE", "CONST")) {
-            if (this.is("TYPE")) {
+        while (this.is(TYPE, CONST)) {
+            if (this.is(TYPE)) {
                 const typeBlock = this.type_block();
                 blocks.push(typeBlock);
             } else {
@@ -65,14 +67,16 @@ class Parser {
     }
 
     constant_block(): ConstantBlock {
-        this.expect("CONST");
+        this.expect(CONST);
         const defs: ConstantDefinition[] = [];
         const def = this.constant_definition();
         defs.push(def);
         while (this.is(SEMICOLON)) {
             this.nextToken();
-            const def = this.constant_definition();
-            defs.push(def);
+            if (this.is(IDENT)) {
+                const def = this.constant_definition();
+                defs.push(def);
+            }
         }
         return new ConstantBlock(defs);
     }
