@@ -1,4 +1,4 @@
-import { controlSymbols, lexemList, specialValues } from "./config";
+import { controlSymbols, lexemList, namedSpecialValues, keyWords } from "./config";
 import Lexer, { Token } from "./Lexer";
 
 test("Идентификатор распознается", () => {
@@ -77,7 +77,27 @@ test("Управляющие символы в строках не распоз�
 });
 
 test("Cпециальные значения распознаются корректно", () => {
-    const data = specialValues.join(' ');
+    const data = keyWords.join(' ');
+    let lexer = new Lexer(data, lexemList);
+    let token = lexer.parse();
+    while (!token.isEof()) {
+        expect(token.toString()).toMatchSnapshot();
+        token = lexer.parse();
+    }
+});
+
+test("Именованные специальные значения распознаются корректно", () => {
+    const data = Object.keys(namedSpecialValues).join(' ');
+    let lexer = new Lexer(data, lexemList);
+    let token = lexer.parse();
+    while (!token.isEof()) {
+        expect(token.toString()).toMatchSnapshot();
+        token = lexer.parse();
+    }
+});
+
+test("Распознается самая длинная лексема", () => {
+    const data = "VARCHAR";
     let lexer = new Lexer(data, lexemList);
     let token = lexer.parse();
     while (!token.isEof()) {
