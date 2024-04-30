@@ -20,4 +20,14 @@ export class Token {
     isError(): boolean {
         return this.type === ERROR;
     }
+
+    is(...domains: string[]): boolean {
+        for (let domain of domains) {
+            if (this.type === domain) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

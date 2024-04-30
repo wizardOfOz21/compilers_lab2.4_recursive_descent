@@ -1,5 +1,6 @@
 import { lexemDefinition } from "./config";
 import Lexer, { printLexems } from "./lexer";
+import Parser from "./parser";
 
 const readline = require('readline');
 
@@ -10,6 +11,10 @@ const rl = readline.createInterface({
 });
 
 rl.on('line', (line) => {
-    const l = new Lexer(line, lexemDefinition);
+    let l = new Lexer(line, lexemDefinition);
     printLexems(l);
+    l = new Lexer(line, lexemDefinition);
+    const p = new Parser(l);
+    const prog = p.parse();
+    console.log(prog.blocks);
 });

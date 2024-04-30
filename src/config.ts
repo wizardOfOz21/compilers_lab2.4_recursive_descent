@@ -19,7 +19,8 @@ export const keyWords = [
     "END",
     "TYPE",
     "VAR",
-    "CASE"
+    "CASE",
+    "CONST"
 ];
 
 // [ ] { } ( ) \ ^ $ . | ? * +
