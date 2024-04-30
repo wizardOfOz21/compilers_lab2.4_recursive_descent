@@ -1,7 +1,5 @@
 import { LexemList } from "./Lexer";
 
-const match = (str: string, regex: RegExp) => str.match(regex);
-
 function getKeyWords(values: string[]) {
     const lexemList: LexemList = {};
     for (const value of values) {
@@ -36,6 +34,7 @@ export const keyWords = [
     "END",
     "TYPE",
     "VAR",
+    "CASE"
 ];
 
 export const namedSpecialValues = {
@@ -51,6 +50,7 @@ export const namedSpecialValues = {
     EQUAL: "=",
     COLON: ":",
     SEMICOLON: ";",
+    POINT: ".",
 };
 
 const lexemDefinition = {
