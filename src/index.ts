@@ -1,23 +1,12 @@
 import { lexemDefinition } from "./config";
-import Lexer, {EOF, ERROR} from "./lexer";
-import { Token } from "./token";
+
+import Lexer, { printLexems } from "./lexer";
+import { Token, EOF, ERROR } from "./token";
 
 const fs = require("node:fs");
 
 export function lexemFormat(token: Token) {
     return `${token.type} (${token.pos.row},${token.pos.col}): ${token.value}`;
-}
-
-function print(lexer: Lexer) {
-    let token: Token = lexer.parse();
-    while (!token.isEof()) {
-        if (token.isError()) {
-            console.log(`syntax error (${token.pos.row},${token.pos.col})`);
-        } else {
-            console.log(token.toString());
-        }
-        token = lexer.parse();
-    }
 }
 
 fs.readFile("input.txt", "utf8", (err, data: string) => {
@@ -26,5 +15,5 @@ fs.readFile("input.txt", "utf8", (err, data: string) => {
         return;
     }
     let lexer = new Lexer(data, lexemDefinition);
-    print(lexer);
+    printLexems(lexer);
 });

@@ -32,11 +32,11 @@ export function arrayToRegexMap(values: string[]) {
     return lexemList;
 }
 
-export function objectToRegexMap(values: { [key: string]: string }) {
+export function objectToRegexMap(obj: { [key: string]: string }) {
     const lexemList: RegexpMap = {};
-    for (const value in values) {
-        lexemList[value] = new RegExp(`${value}\\b`);
-        // lexemList[value] = new RegExp(`${values[value]}\\b`);
+    for (const key in obj) {
+        const value = obj[key];
+        lexemList[key] = new RegExp(value);
     }
     return lexemList;
 }

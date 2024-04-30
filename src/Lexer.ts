@@ -28,10 +28,8 @@ class Lexer {
 
     constructor(input: string, lexems: LexemMap) {
         this.input = input;
-        console.log(lexems);
         this.lexems = { ...Object.keys(defaultLexems), ...Object.keys(lexems) };
         this.regex = alternativeCombine(this.getRegex(lexems), "u");
-        console.log(this.regex);
         this.row = 1;
         this.col = 1;
         this.error = false;
@@ -94,3 +92,15 @@ class Lexer {
 }
 
 export default Lexer;
+
+export function printLexems(lexer: Lexer) {
+    let token: Token = lexer.parse();
+    while (!token.isEof()) {
+        if (token.isError()) {
+            console.log(`syntax error (${token.pos.row},${token.pos.col})`);
+        } else {
+            console.log(token.toString());
+        }
+        token = lexer.parse();
+    }
+}

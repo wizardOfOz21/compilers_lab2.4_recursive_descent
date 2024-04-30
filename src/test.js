@@ -1,4 +1,4 @@
-import { controlSymbols, lexemDefinition, namedSpecialValues, keyWords } from "./config";
+import { controlSymbols, lexemDefinition, keyWords } from "./config";
 import Lexer, { Token } from "./lexer";
 
 test("Идентификатор распознается", () => {
@@ -86,8 +86,23 @@ test("Cпециальные значения распознаются корре
     }
 });
 
+const namedSpecialValues = {
+    LPAREN: "(",
+    RPAREN: ")",
+    COMMA: ",",
+    POINTS: "..",
+    CARET: "^",
+    PLUS: "+",
+    MINUS: "-",
+    LBRACKET: "[",
+    RBRACKET: "]",
+    EQUAL: "=",
+    COLON: ":",
+    SEMICOLON: ";",
+};
+
 test("Именованные специальные значения распознаются корректно", () => {
-    const data = Object.keys(namedSpecialValues).join(' ');
+    const data = Object.values(namedSpecialValues).join(' ');
     let lexer = new Lexer(data, lexemDefinition);
     let token = lexer.parse();
     while (!token.isEof()) {

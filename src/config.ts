@@ -22,16 +22,17 @@ export const keyWords = [
     "CASE"
 ];
 
+// [ ] { } ( ) \ ^ $ . | ? * +
 export const namedSpecialValues = {
-    LPAREN: "(",
-    RPAREN: ")",
+    LPAREN: "\\(",
+    RPAREN: "\\)",
     COMMA: ",",
-    POINTS: "..",
-    CARET: "^",
-    PLUS: "+",
+    POINTS: "\\.\\.",
+    CARET: "\\^",
+    PLUS: "\\+",
     MINUS: "-",
-    LBRACKET: "[",
-    RBRACKET: "]",
+    LBRACKET: "\\[",
+    RBRACKET: "\\]",
     EQUAL: "=",
     COLON: ":",
     SEMICOLON: ";",
@@ -49,5 +50,3 @@ export const lexemDefinition: LexemMap = {
     NEWLINE_R: /\r\n/,
     SPACE: /[^\S\r\n]+/,
 };
-
-console.log(lexemDefinition);
