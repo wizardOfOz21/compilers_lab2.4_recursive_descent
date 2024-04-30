@@ -13,3 +13,14 @@ export type char = string | -1;
 
 export const EOF: char = -1;
 export const NOT_ASSIGNED_CATEGORY = "Cn";
+
+export class Position {
+    constructor(
+        public row: number,
+        public col: number,
+    ) {}
+
+    toString() {
+        return `(${this.row},${this.col})`;
+    }
+}

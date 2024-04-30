@@ -1,58 +1,18 @@
-const match = (str: string, regex: RegExp) => str.match(regex);
+import { addGroups, alternativeCombine, match, RegexpMap } from "./regex_utils";
+import { EOF, ERROR, Token } from "./token";
+import { Position } from "./utils";
 
-export interface LexemList {
-    [key: string]: RegExp;
-}
+export type LexemMap = RegexpMap;
 
-export const EOF: string = "EOF";
-export const ERROR: string = "ERROR";
-export const NEWLINE: string = "NEWLINE";
-export const NEWLINE_R: string = "NEWLINE_R";
-export const SPACE: string = "SPACE";
+export const NEWLINE = "NEWLINE";
+export const NEWLINE_R = "NEWLINE_R";
+export const SPACE = "SPACE";
 
-export class Position {
-    constructor(
-        public row: number,
-        public col: number,
-    ) {}
-
-    toString() {
-        return `(${this.row},${this.col})`;
-    }
-}
-
-export class Token {
-    constructor(
-        public type: string,
-        public value: any,
-        public pos: Position
-    ) {}
-
-    toString() {
-        return `${this.type} ${this.pos.toString()}: ${this.value}`;
-    }
-
-    isEof() {
-        return this.type === EOF;
-    }
-
-    isError() {
-        return this.type === ERROR;
-    }
-}
-
-const defaultLexems = {
-    [NEWLINE]: new RegExp(`(?<${NEWLINE}>\\n)`),
-    [SPACE]: new RegExp(`(?<${SPACE}>[^\\S\\r\\n]+)`),
+const defaultLexems: LexemMap = {
+    NEWLINE: /\n/,
+    NEWLINE_R: /\r\n/,
+    SPACE: /[^\S\r\n]+/,
 };
-
-function combine(lexems: LexemList): RegExp {
-    const source: string = Object.values(lexems).reduce(
-        (prev, current: RegExp) => prev + "|" + current.source,
-        ""
-    ) as string;
-    return new RegExp(`^(${source.slice(1)})`, "u");
-}
 
 class Lexer {
     private lexems: string[];
@@ -60,12 +20,18 @@ class Lexer {
     private row: number;
     private col: number;
     private error: boolean;
-    private input: string
+    private input: string;
 
-    constructor(input: string, lexems: LexemList) {
+    getRegex(lexems: LexemMap): LexemMap {
+        return addGroups({...defaultLexems, ...lexems });
+    }
+
+    constructor(input: string, lexems: LexemMap) {
         this.input = input;
-        this.lexems = { ...defaultLexems, ...Object.keys(lexems) };
-        this.regex = combine(lexems);
+        console.log(lexems);
+        this.lexems = { ...Object.keys(defaultLexems), ...Object.keys(lexems) };
+        this.regex = alternativeCombine(this.getRegex(lexems), "u");
+        console.log(this.regex);
         this.row = 1;
         this.col = 1;
         this.error = false;
@@ -96,7 +62,7 @@ class Lexer {
                 return this.parse();
             } else {
                 this.error = true;
-                return new Token(ERROR, "", new Position(this.row,col));
+                return new Token(ERROR, "", new Position(this.row, col));
             }
         }
         if (this.error) {

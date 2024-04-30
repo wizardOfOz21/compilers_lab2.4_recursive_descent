@@ -1,5 +1,6 @@
-import { lexemList } from "./config";
-import Lexer, {EOF, ERROR, Token} from "./Lexer";
+import { lexemDefinition } from "./config";
+import Lexer, {EOF, ERROR} from "./lexer";
+import { Token } from "./token";
 
 const fs = require("node:fs");
 
@@ -24,6 +25,6 @@ fs.readFile("input.txt", "utf8", (err, data: string) => {
         console.error(err);
         return;
     }
-    let lexer = new Lexer(data, lexemList);
+    let lexer = new Lexer(data, lexemDefinition);
     print(lexer);
 });

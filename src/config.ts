@@ -1,20 +1,5 @@
-import { LexemList } from "./Lexer";
-
-function getKeyWords(values: string[]) {
-    const lexemList: LexemList = {};
-    for (const value of values) {
-        lexemList[value] = new RegExp(`${value}\\b`);
-    }
-    return lexemList;
-}
-
-function getNamedSpecialValues(values: { [key: string]: string }) {
-    const lexemList: LexemList = {};
-    for (const value in values) {
-        lexemList[value] = new RegExp(`${value}\\b`);
-    }
-    return lexemList;
-}
+import { LexemMap } from "./lexer";
+import { arrayToRegexMap, objectToRegexMap } from "./regex_utils";
 
 // Лексическая структура языка:
 // - Лексические домены заданы регулярными выражениями
@@ -50,29 +35,19 @@ export const namedSpecialValues = {
     EQUAL: "=",
     COLON: ":",
     SEMICOLON: ";",
-    POINT: ".",
 };
 
-const lexemDefinition = {
-    ...getNamedSpecialValues(namedSpecialValues),
-    ...getKeyWords(keyWords),
+export const lexemDefinition: LexemMap = {
+    ...objectToRegexMap(namedSpecialValues),
+    ...arrayToRegexMap(keyWords),
     IDENTIFIER: /\p{L}\w*/u,
     UNSIGNED_NUMBER: /[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?/,
     STRING: /'[^\p{Cc}]*?'/u,
-
+    
+    COMMENT: /\{[^}]*\}/u,
     NEWLINE: /\n/,
     NEWLINE_R: /\r\n/,
     SPACE: /[^\S\r\n]+/,
 };
 
-export const lexemList: LexemList = (() => {
-    const lexemList: LexemList = {};
-    for (const lexem in lexemDefinition) {
-        lexemList[lexem] = new RegExp(
-            `(?<${lexem}>${lexemDefinition[lexem].source})`
-        );
-    }
-    return lexemList;
-})();
-
-console.log(lexemList);
+console.log(lexemDefinition);
