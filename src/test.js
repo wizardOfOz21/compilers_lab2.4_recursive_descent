@@ -1,5 +1,7 @@
 import { controlSymbols, lexemDefinition, keyWords } from "./config";
 import Lexer, { Token } from "./lexer";
+import Parser from "./parser";
+import { printGrpah } from "./tree";
 
 test("Идентификатор распознается", () => {
     const data = "testCounter1";
@@ -119,4 +121,15 @@ test("Распознается самая длинная лексема", () => 
         expect(token.toString()).toMatchSnapshot();
         token = lexer.parse();
     }
+});
+
+
+test("CONST A = - 1", () => {
+    const data = "CONST A = - 1";
+    let lexer = new Lexer(data, lexemDefinition);
+    let parser = new Parser(lexer);
+
+    const prog = parser.parse();
+
+    expect(printGrpah(prog)).toMatchSnapshot();
 });

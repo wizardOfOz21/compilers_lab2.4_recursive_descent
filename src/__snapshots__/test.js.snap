@@ -1,5 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`CONST A = - 1 1`] = `
+"digraph graph1 {
+0[label="Program"];
+0 -> 1[label="blocks[0]"];
+1[label="ConstantBlock"];
+1 -> 2[label="defs[0]"];
+2[label="ConstantDefinition"];
+3[label="IDENTIFIER:A"];
+2 -> 3[label="ident"];
+2 -> 4[label="constant"];
+4[label="SignedConstant"];
+5[label="MINUS:-"];
+4 -> 5[label="sign"];
+4 -> 6[label="value"];
+6[label="UnsignedConstant"];
+7[label="UNSIGNED_NUMBER:1"];
+6 -> 7[label="value"];
+}
+"
+`;
+
 exports[`Cпециальные значения распознаются корректно 1`] = `"NIL (1,1): NIL"`;
 
 exports[`Cпециальные значения распознаются корректно 2`] = `"PACKED (1,5): PACKED"`;
@@ -21,6 +42,8 @@ exports[`Cпециальные значения распознаются кор�
 exports[`Cпециальные значения распознаются корректно 10`] = `"VAR (1,46): VAR"`;
 
 exports[`Cпециальные значения распознаются корректно 11`] = `"CASE (1,50): CASE"`;
+
+exports[`Cпециальные значения распознаются корректно 12`] = `"CONST (1,55): CONST"`;
 
 exports[`Идентификатор распознается 1`] = `"IDENTIFIER (1,1): testCounter1"`;
 

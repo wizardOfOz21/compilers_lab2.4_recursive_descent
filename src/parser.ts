@@ -1,41 +1,18 @@
 import Lexer from "./lexer";
 import { Token } from "./token";
+import {
+    Constant,
+    ConstantBlock,
+    ConstantDefinition,
+    Program,
+    SignedConstant,
+    TypeBlock,
+    UnsignedConstant,
+} from "./tree";
 
 const IDENT = "IDENTIFIER";
 const SEMICOLON = "SEMICOLON";
 const UNSIGNED_NUMBER = "UNSIGNED_NUMBER";
-
-class Program {
-    constructor(public blocks: (TypeBlock | ConstantBlock)[]) {}
-}
-
-class TypeBlock {}
-
-class ConstantBlock {
-    constructor(public defs: ConstantDefinition[]) {}
-}
-
-class ConstantDefinition {
-    constructor(public ident: Token, public constant: Constant) {}
-}
-
-type Constant =
-    | SignedConstant
-    | UnsignedConstant
-    | StringConstant
-    | NilConstant;
-
-class TokenContainer {
-    constructor(public value: Token) {}
-}
-
-class UnsignedConstant extends TokenContainer {}
-class StringConstant extends TokenContainer {}
-class NilConstant extends TokenContainer {}
-
-class SignedConstant {
-    constructor(public sign: Token, public value: UnsignedConstant | Token) {}
-}
 
 class Parser {
     private lexer: Lexer;
@@ -69,7 +46,6 @@ class Parser {
     parse(): Program {
         this.nextToken();
         const program = this.program();
-        console.log(program);
         this.expect("EOF");
         return program;
     }
@@ -82,7 +58,6 @@ class Parser {
                 blocks.push(typeBlock);
             } else {
                 const constBlock = this.constant_block();
-                console.log(constBlock);
                 blocks.push(constBlock);
             }
         }
