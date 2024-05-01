@@ -5,7 +5,8 @@ constant_block ::= 'CONST' constant_definition (; constant_definition?)*
 // Определение константы
 
 constant_definition ::= IDENT = constant
-constant ::= sign? UNSIGNED_NUMBER | STRING | 'NIL'
+unsigned_constant ::= UNSIGNED_NUMBER | STRING | 'NIL'
+constant ::= sign? UNSIGNED_NUMBER | STRING
 sign ::= + | -
 
 // Определение типа
@@ -23,11 +24,11 @@ index_type ::= simple_type
 component_type ::= type
 
 record_type ::= 'RECORD' field_list 'END'
-field_list ::= fixed_part | fixed_part ; variant_part | variant_part
+field_list ::= fixed_part (; variant_part)? | variant_part
 fixed_part ::= record_section (; record_section)*
 record_section ::= field_ident (, field_ident)* : type
-variant_part ::= 'CASE' tag_field : type_ident of variant (; variant)*
-variant ::= case_label_list : '(' field_list | case_label_list ')'
+variant_part ::= 'CASE' tag_field : type_ident 'OF' variant (; variant)*
+variant ::= case_label_list : '(' (field_list | case_label_list) ')'
 case_label_list ::= case_label (, case_label)*
 
 set_type ::= 'SET' 'OF' base_type
@@ -37,7 +38,7 @@ file_type ::= 'FILE' 'OF' type
 
 pointer_type ::= ^type_ident
 
-case_label ::= UNSIGNED_CONSTANT
+case_label ::= unsigned_constant
 tag_field ::= IDENT
 field_ident ::= IDENT
 type_ident ::= IDENT

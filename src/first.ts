@@ -79,3 +79,13 @@ export const constantBlock = [lms.CONST]
 export const constantIdent = [lms.IDENTIFIER]
 
 export const indexType = [...simpleType]
+
+export const fixedPart = [lms.IDENTIFIER]
+
+export const unsignedConstant = [lms.NIL, lms.STRING, lms.UNSIGNED_NUMBER]
+
+export const variantPart = [...unsignedConstant];
+
+export const fieldList = [lms.IDENTIFIER, lms.CASE]
+
+export const caseLabelList = [...unsignedConstant]

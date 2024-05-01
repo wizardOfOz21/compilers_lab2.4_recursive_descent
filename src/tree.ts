@@ -92,8 +92,7 @@ export class RecordVariantPart {
 export class RecordVariant {
     constructor(
         public const_label_list: CaseLabelList,
-        public field_list: FieldList,
-        public labe_list: CaseLabelList
+        public list: FieldList | CaseLabelList,
     ){}
 }
 
@@ -116,16 +115,17 @@ export class TypeIdent extends TokenContainer {}
 
 export type Constant =
     | SignedConstant
-    | UnsignedConstant
+    | UnsignedNumber
     | StringConstant
     | NilConstant;
 
 export class UnsignedConstant extends TokenContainer {}
+export class UnsignedNumber extends TokenContainer {}
 export class StringConstant extends TokenContainer {}
 export class NilConstant extends TokenContainer {}
 
 export class SignedConstant {
-    constructor(public sign: Token, public value: UnsignedConstant | Token) {}
+    constructor(public sign: Token, public value: UnsignedNumber) {}
 }
 
 export function printGraphRec(node, graph: {str: string, id: number}, parent?: number) {

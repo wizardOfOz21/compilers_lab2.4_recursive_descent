@@ -4,12 +4,19 @@ import Lexer from "./lexer";
 import { Token } from "./token";
 import {
     ArrayType,
+    CaseLabelList,
     Constant,
     ConstantBlock,
     ConstantDefinition,
+    FieldList,
     FileType,
     PointerType,
     Program,
+    RecordFixedPart,
+    RecordSection,
+    RecordType,
+    RecordVariant,
+    RecordVariantPart,
     ScalarType,
     SetType,
     SignedConstant,
@@ -107,9 +114,17 @@ class Parser {
         return new ConstantDefinition(ident, constant);
     }
 
-    // constant ::= sign? UNSIGNED_NUMBER | STRING | 'NIL'
+    // unsigned_constant ::= UNSIGNED_NUMBER | STRING | 'NIL'
+    unsigned_constant(): UnsignedConstant {
+        if (this.is(fst.unsignedConstant)) {
+            return this.nextToken();
+        }
+        this.throw("unsigned_constant");
+    }
+
+    // constant ::= sign? UNSIGNED_NUMBER | STRING
     constant(): Constant {
-        if (this.is(lms.NIL, lms.STRING)) {
+        if (this.is(lms.STRING)) {
             return this.nextToken();
         }
         let sign;
@@ -234,7 +249,7 @@ class Parser {
             return this.array_type();
         }
         if (this.is(fst.recordType)) {
-            // return this.record_type();
+            return this.record_type();
         }
         if (this.is(fst.fileType)) {
             return this.file_type();
@@ -292,6 +307,120 @@ class Parser {
         this.expect(lms.OF);
         const type = this.type();
         return new FileType(type);
+    }
+
+    // record_type ::= 'RECORD' field_list 'END'
+    record_type(): RecordType {
+        this.expect(lms.RECORD);
+        const field_list = this.field_list();
+        this.expect(lms.END);
+        return new RecordType(field_list);
+    }
+
+    // field_list ::= fixed_part | fixed_part ; variant_part | variant_part
+    field_list(): FieldList {
+        if (this.is(fst.fixedPart)) {
+            const fixed_part = this.fixed_part();
+            let variant_part = null;
+            if (this.is(lms.SEMICOLON)) {
+                this.nextToken();
+                variant_part = this.variant_part();
+            }
+            return new FieldList(fixed_part, variant_part);
+        }
+        if (this.is(fst.variantPart)) {
+            const variant_part = this.variant_part();
+            return new FieldList(null, variant_part);
+        }
+        this.throw("field_list");
+    }
+
+    // fixed_part ::= record_section (; record_section)*
+    fixed_part(): RecordFixedPart {
+        const sections = [];
+        const section = this.record_section();
+        sections.push(section);
+        while (this.is(lms.SEMICOLON)) {
+            this.nextToken();
+            const section = this.record_section();
+            sections.push(section);
+        }
+        return new RecordFixedPart(sections);
+    }
+
+    // record_section ::= field_ident (, field_ident)* : type
+    record_section(): RecordSection {
+        const idents = [];
+        const ident = this.field_ident();
+        idents.push(ident);
+        while (this.is(lms.COMMA)) {
+            this.nextToken();
+            const ident = this.field_ident();
+            idents.push(ident);
+        }
+        this.expect(lms.COLON);
+        const type = this.type();
+        return new RecordSection(idents, type);
+    }
+
+    // field_ident ::= IDENT
+    field_ident(): Token {
+        return this.expect(lms.IDENTIFIER);
+    }
+
+    // variant_part ::= 'CASE' tag_field : type_ident of variant (; variant)*
+    variant_part(): RecordVariantPart {
+        this.expect(lms.CASE);
+        const tag = this.tag_field();
+        this.expect(lms.COLON);
+        const type = this.type_ident();
+        this.expect(lms.OF);
+        const variants = [];
+        const variant = this.variant();
+        variants.push(variant);
+        while (this.is(lms.SEMICOLON)) {
+            this.nextToken();
+            const variant = this.variant();
+            variants.push(variant);
+        }
+        return new RecordVariantPart(tag, type, variants);
+    }
+
+    // variant ::= case_label_list : '(' field_list | case_label_list ')'
+    variant(): RecordVariant {
+        const const_list = this.case_label_list();
+        this.expect(lms.COLON);
+        this.expect(lms.LPAREN);
+        let list;
+        if (this.is(fst.fieldList)) {
+            list = this.field_list();
+        } else if (this.is(fst.caseLabelList)) {
+            list = this.case_label_list();
+        }
+        return new RecordVariant(const_list, list);
+    }
+
+    // case_label_list ::= case_label (, case_label)*
+    case_label_list(): CaseLabelList {
+        const labels = [];
+        const label = this.case_label();
+        labels.push(label);
+        while (this.is(lms.COMMA)) {
+            this.nextToken();
+            const label = this.case_label();
+            labels.push(label);
+        }
+        return new CaseLabelList(labels);
+    }
+
+    // case_label ::= unsigned_constant
+    case_label(): UnsignedConstant {
+        return this.unsigned_constant();
+    }
+
+    // tag_field ::= IDENT
+    tag_field(): Token {
+        return this.expect(lms.IDENTIFIER);
     }
 }
 
