@@ -115,7 +115,6 @@ class Parser {
 
     // unsigned_constant ::= UNSIGNED_NUMBER | STRING | 'NIL'
     unsigned_constant(): UnsignedConstant {
-        console.log(this.sym);
         if (this.is(fst.unsignedConstant)) {
             return this.nextToken();
         }
@@ -362,7 +361,6 @@ class Parser {
 
     // record_section ::= field_ident (, field_ident)* : type
     record_section(): RecordSection {
-        console.log('section');
         const idents = [];
         const ident = this.field_ident();
         idents.push(ident);
@@ -383,7 +381,6 @@ class Parser {
 
     // variant_part ::= 'CASE' tag_field : type_ident of variant (; variant)*
     variant_part(): RecordVariantPart {
-        console.log('variant_part');
         this.expect(lms.CASE);
         const tag = this.tag_field();
         this.expect(lms.COLON);
@@ -392,7 +389,7 @@ class Parser {
         const variants = [];
         const variant = this.variant();
         variants.push(variant);
-        console.log(this.sym);
+
         while (this.is(lms.SEMICOLON)) {
             this.nextToken();
             const variant = this.variant();
@@ -403,7 +400,6 @@ class Parser {
 
     // variant ::= case_label_list : '(' field_list | case_label_list ')'
     variant(): RecordVariant {
-        console.log('variant');
         const const_list = this.case_label_list();
         this.expect(lms.COLON);
         let list;
@@ -414,13 +410,12 @@ class Parser {
         } else if (this.is(fst.caseLabelList)) {
             list = this.case_label_list();
         }
-        console.log('variant end');
+
         return new RecordVariant(const_list, list);
     }
 
     // case_label_list ::= case_label (, case_label)*
     case_label_list(): CaseLabelList {
-        console.log('case_label_list');
         const labels = [];
         const label = this.case_label();
         labels.push(label);
@@ -429,7 +424,6 @@ class Parser {
             const label = this.case_label();
             labels.push(label);
         }
-        console.log('123');
         return new CaseLabelList(labels);
     }
 
