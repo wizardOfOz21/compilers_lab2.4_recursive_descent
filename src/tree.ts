@@ -130,11 +130,16 @@ export class SignedConstant {
 
 export function printGraphRec(node, graph: {str: string, id: number}, parent?: number) {
     const id = graph.id++;
+    if (node === null) {
+        graph.str += `${id}[label="${null}"];\n`
+        return;
+    }
+    if (node.constructor.name === 'Boolean') {
+        graph.str += `${id}[label="${node}"];\n`
+        return;
+    }
     const keys = Object.keys(node);
     let name = node.constructor.name;
-    if (name === 'Boolean') {
-        name = node;
-    }
     graph.str += `${id}[label="${name}"];\n`
     for (let key of keys) {
         const prop = node[key];
@@ -153,7 +158,7 @@ export function printGraphRec(node, graph: {str: string, id: number}, parent?: n
             continue;
         }
 
-        if (prop.constructor.name === 'Token') {
+        if (prop instanceof Token) {
             const token_id = graph.id++;
             graph.str += `${token_id}[label="${prop.value}"];\n`
             graph.str += `${id} -> ${token_id}[label="${key}"];\n`

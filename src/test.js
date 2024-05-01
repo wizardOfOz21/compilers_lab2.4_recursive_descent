@@ -154,7 +154,6 @@ const parserTest = [
     "TYPE t = FILE OF FILE OF FILE OF t",
     "TYPE t = ARRAY [a,b,c] OF m",
     "TYPE t = FILE OF ARRAY [b,c] OF m"
-
 ]
 
 parserTest.forEach((input) => {

@@ -1,7 +1,9 @@
 import { lexemDefinition } from "./config";
 
 import Lexer, { printLexems } from "./lexer";
+import Parser from "./parser";
 import { Token } from "./token";
+import { printGrpah } from "./tree";
 
 const fs = require("node:fs");
 
@@ -15,5 +17,7 @@ fs.readFile("input.txt", "utf8", (err, data: string) => {
         return;
     }
     let lexer = new Lexer(data, lexemDefinition);
-    printLexems(lexer);
+    const p = new Parser(lexer);
+    const prog = p.parse();
+    console.log(printGrpah(prog));
 });

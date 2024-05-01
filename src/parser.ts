@@ -76,7 +76,6 @@ class Parser {
 
     // program ::= (type_block | constant_block)*
     program(): Program {
-        console.log("program");
         const blocks: (ConstantBlock | TypeBlock)[] = [];
         while (this.is(fst.typeBlock, fst.constantBlock)) {
             if (this.is(fst.typeBlock)) {
@@ -116,6 +115,7 @@ class Parser {
 
     // unsigned_constant ::= UNSIGNED_NUMBER | STRING | 'NIL'
     unsigned_constant(): UnsignedConstant {
+        console.log(this.sym);
         if (this.is(fst.unsignedConstant)) {
             return this.nextToken();
         }
@@ -131,17 +131,26 @@ class Parser {
         if (this.is(fst.sign)) {
             sign = this.nextToken();
         }
-        if (!this.is(lms.UNSIGNED_NUMBER)) {
+        if (!this.is(lms.UNSIGNED_NUMBER, lms.IDENTIFIER)) {
             this.throw("constant");
         }
-        const token = this.nextToken();
+        let token;
+        if (this.is(lms.UNSIGNED_NUMBER)) {
+            token = this.nextToken();
+        } else {
+            token = this.constant_ident();
+        }
         const u_const = new UnsignedConstant(token);
         return sign ? new SignedConstant(sign, u_const) : u_const;
     }
 
+    // constant_ident ::= IDENT
+    constant_ident(): Token {
+        return this.expect(lms.IDENTIFIER);
+    }
+
     // type_block ::= 'TYPE' type_definition (; type_definition?)*
     type_block(): TypeBlock {
-        console.log("type_block");
         this.expect(lms.TYPE);
         const defs: TypeDefinition[] = [];
         const def = this.type_definition();
@@ -158,7 +167,6 @@ class Parser {
 
     // type_definition ::= IDENT = type
     type_definition(): TypeDefinition {
-        console.log("type_definition");
         const ident = this.expect(lms.IDENTIFIER);
         this.expect(lms.EQUAL);
         const type = this.type();
@@ -167,7 +175,6 @@ class Parser {
 
     // type ::= simple_type | pointer_type | structured_type
     type(): Type {
-        console.log("type");
         if (this.is(fst.simpleType)) {
             return this.simple_type();
         }
@@ -182,17 +189,31 @@ class Parser {
 
     // simple_type ::= scalar_type | subrange_type | type_ident
     simple_type(): SimpleType {
-        console.log("simple_type");
         if (this.is(fst.scalarType)) {
             return this.scalar_type();
         }
-        if (this.is(fst.typeIdent)) {
-            return this.type_ident();
+        if (this.is(lms.IDENTIFIER)) {
+            // пришлось заглянуть вперед на 2 токена (X
+            const ident = this.nextToken();
+            if (this.is(lms.POINTS)) {
+                this.nextToken();
+                const end = this.constant();
+                return new SubrangeType(ident, end);
+            }
+            return ident;
         }
         if (this.is(fst.subrangeType)) {
             return this.subrange_type();
         }
         this.throw("simpleType");
+    }
+
+    // subrange_type ::= constant .. constant
+    subrange_type(): SubrangeType {
+        const start = this.constant();
+        this.expect(lms.POINTS);
+        const end = this.constant();
+        return new SubrangeType(start, end);
     }
 
     // scalar_type ::= '(' IDENT (, IDENT)* ')'
@@ -210,23 +231,13 @@ class Parser {
         return new ScalarType(idents);
     }
 
-    // subrange_type ::= constant .. constant
-    subrange_type(): SubrangeType {
-        const start = this.constant();
-        this.expect(lms.POINTS);
-        const end = this.constant();
-        return new SubrangeType(start, end);
-    }
-
     // type_ident ::= IDENT
     type_ident(): Token {
-        console.log("type_ident");
         return this.expect(lms.IDENTIFIER);
     }
 
     // pointer_type ::= ^ type_ident
     pointer_type(): PointerType {
-        console.log("pointer_type");
         this.expect(lms.CARET);
         const ident = this.type_ident();
         return new PointerType(ident);
@@ -317,13 +328,12 @@ class Parser {
         return new RecordType(field_list);
     }
 
-    // field_list ::= fixed_part | fixed_part ; variant_part | variant_part
+    // field_list ::= fixed_part variant_part | variant_part
     field_list(): FieldList {
         if (this.is(fst.fixedPart)) {
             const fixed_part = this.fixed_part();
             let variant_part = null;
-            if (this.is(lms.SEMICOLON)) {
-                this.nextToken();
+            if (this.is(fst.variantPart)) {
                 variant_part = this.variant_part();
             }
             return new FieldList(fixed_part, variant_part);
@@ -342,14 +352,17 @@ class Parser {
         sections.push(section);
         while (this.is(lms.SEMICOLON)) {
             this.nextToken();
-            const section = this.record_section();
-            sections.push(section);
+            if (this.is(fst.recordSection)) {
+                const section = this.record_section();
+                sections.push(section);
+            }
         }
         return new RecordFixedPart(sections);
     }
 
     // record_section ::= field_ident (, field_ident)* : type
     record_section(): RecordSection {
+        console.log('section');
         const idents = [];
         const ident = this.field_ident();
         idents.push(ident);
@@ -370,6 +383,7 @@ class Parser {
 
     // variant_part ::= 'CASE' tag_field : type_ident of variant (; variant)*
     variant_part(): RecordVariantPart {
+        console.log('variant_part');
         this.expect(lms.CASE);
         const tag = this.tag_field();
         this.expect(lms.COLON);
@@ -378,6 +392,7 @@ class Parser {
         const variants = [];
         const variant = this.variant();
         variants.push(variant);
+        console.log(this.sym);
         while (this.is(lms.SEMICOLON)) {
             this.nextToken();
             const variant = this.variant();
@@ -388,20 +403,24 @@ class Parser {
 
     // variant ::= case_label_list : '(' field_list | case_label_list ')'
     variant(): RecordVariant {
+        console.log('variant');
         const const_list = this.case_label_list();
         this.expect(lms.COLON);
-        this.expect(lms.LPAREN);
         let list;
-        if (this.is(fst.fieldList)) {
+        if (this.is(lms.LPAREN)) {
+            this.nextToken();
             list = this.field_list();
+            this.expect(lms.RPAREN);
         } else if (this.is(fst.caseLabelList)) {
             list = this.case_label_list();
         }
+        console.log('variant end');
         return new RecordVariant(const_list, list);
     }
 
     // case_label_list ::= case_label (, case_label)*
     case_label_list(): CaseLabelList {
+        console.log('case_label_list');
         const labels = [];
         const label = this.case_label();
         labels.push(label);
@@ -410,6 +429,7 @@ class Parser {
             const label = this.case_label();
             labels.push(label);
         }
+        console.log('123');
         return new CaseLabelList(labels);
     }
 

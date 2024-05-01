@@ -7,7 +7,7 @@
     "test": "jest",
     "testc": "jest -u",
     "build": "webpack --mode development --watch",
-    "file": "node dist/file.js",
+    "file": "node dist/file.js > out",
     "console": "node dist/console.js",
     "print": "node dist/print.js"
   },

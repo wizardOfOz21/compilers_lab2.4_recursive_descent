@@ -9,7 +9,8 @@ export const constant = [
     ...sign, 
     lms.UNSIGNED_NUMBER, 
     lms.STRING, 
-    lms.NIL
+    lms.NIL,
+    lms.IDENTIFIER
 ];
 
 export const scalarType = [
@@ -82,10 +83,12 @@ export const indexType = [...simpleType]
 
 export const fixedPart = [lms.IDENTIFIER]
 
-export const unsignedConstant = [lms.NIL, lms.STRING, lms.UNSIGNED_NUMBER]
+export const unsignedConstant = [lms.NIL, lms.STRING, lms.UNSIGNED_NUMBER, lms.IDENTIFIER]
 
-export const variantPart = [...unsignedConstant];
+export const variantPart = [lms.CASE];
 
 export const fieldList = [lms.IDENTIFIER, lms.CASE]
 
 export const caseLabelList = [...unsignedConstant]
+
+export const recordSection = [lms.IDENTIFIER]
