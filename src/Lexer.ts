@@ -72,7 +72,7 @@ class Lexer {
             ...Object.keys(lexems),
             ...Object.keys(ignoreLexems),
         };
-        this.regex = alternativeCombine(this.getRegex({...ignoreLexems, ...lexems}), "u");
+        this.regex = alternativeCombine(this.getRegex({...ignoreLexems, ...lexems}), "iu");
         this.row = 1;
         this.col = 1;
         this.error = false;
