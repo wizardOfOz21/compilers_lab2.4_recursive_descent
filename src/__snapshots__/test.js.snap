@@ -98,6 +98,39 @@ exports[`CONST a = 1;;; 1`] = `
 "
 `;
 
+exports[`CONST a = 1;;;TYPE t = (a,b,c,d);;; 1`] = `
+"digraph graph1 {
+0[label="Program"];
+0 -> 1[label="blocks[0]"];
+1[label="ConstantBlock"];
+1 -> 2[label="defs[0]"];
+2[label="ConstantDefinition"];
+3[label="a"];
+2 -> 3[label="ident"];
+2 -> 4[label="constant"];
+4[label="UnsignedConstant"];
+5[label="1"];
+4 -> 5[label="value"];
+0 -> 6[label="blocks[1]"];
+6[label="TypeBlock"];
+6 -> 7[label="defs[0]"];
+7[label="TypeDefinition"];
+8[label="t"];
+7 -> 8[label="ident"];
+7 -> 9[label="type"];
+9[label="ScalarType"];
+10[label="a"];
+9 -> 10[label="types[0]"];
+11[label="b"];
+9 -> 11[label="types[1]"];
+12[label="c"];
+9 -> 12[label="types[2]"];
+13[label="d"];
+9 -> 13[label="types[3]"];
+}
+"
+`;
+
 exports[`Cпециальные значения распознаются корректно 1`] = `"NIL (1,1): NIL"`;
 
 exports[`Cпециальные значения распознаются корректно 2`] = `"PACKED (1,5): PACKED"`;
@@ -121,6 +154,208 @@ exports[`Cпециальные значения распознаются кор�
 exports[`Cпециальные значения распознаются корректно 11`] = `"CASE (1,50): CASE"`;
 
 exports[`Cпециальные значения распознаются корректно 12`] = `"CONST (1,55): CONST"`;
+
+exports[`TYPE t = (a,b,c,d);;;; 1`] = `
+"digraph graph1 {
+0[label="Program"];
+0 -> 1[label="blocks[0]"];
+1[label="TypeBlock"];
+1 -> 2[label="defs[0]"];
+2[label="TypeDefinition"];
+3[label="t"];
+2 -> 3[label="ident"];
+2 -> 4[label="type"];
+4[label="ScalarType"];
+5[label="a"];
+4 -> 5[label="types[0]"];
+6[label="b"];
+4 -> 6[label="types[1]"];
+7[label="c"];
+4 -> 7[label="types[2]"];
+8[label="d"];
+4 -> 8[label="types[3]"];
+}
+"
+`;
+
+exports[`TYPE t = ^a 1`] = `
+"digraph graph1 {
+0[label="Program"];
+0 -> 1[label="blocks[0]"];
+1[label="TypeBlock"];
+1 -> 2[label="defs[0]"];
+2[label="TypeDefinition"];
+3[label="t"];
+2 -> 3[label="ident"];
+2 -> 4[label="type"];
+4[label="PointerType"];
+5[label="a"];
+4 -> 5[label="value"];
+}
+"
+`;
+
+exports[`TYPE t = -1..{dsadasd}4 1`] = `
+"digraph graph1 {
+0[label="Program"];
+0 -> 1[label="blocks[0]"];
+1[label="TypeBlock"];
+1 -> 2[label="defs[0]"];
+2[label="TypeDefinition"];
+3[label="t"];
+2 -> 3[label="ident"];
+2 -> 4[label="type"];
+4[label="SubrangeType"];
+4 -> 5[label="start"];
+5[label="SignedConstant"];
+6[label="-"];
+5 -> 6[label="sign"];
+5 -> 7[label="value"];
+7[label="UnsignedConstant"];
+8[label="1"];
+7 -> 8[label="value"];
+4 -> 9[label="end"];
+9[label="UnsignedConstant"];
+10[label="4"];
+9 -> 10[label="value"];
+}
+"
+`;
+
+exports[`TYPE t = ARRAY [a,b,c] OF m 1`] = `
+"digraph graph1 {
+0[label="Program"];
+0 -> 1[label="blocks[0]"];
+1[label="TypeBlock"];
+1 -> 2[label="defs[0]"];
+2[label="TypeDefinition"];
+3[label="t"];
+2 -> 3[label="ident"];
+2 -> 4[label="type"];
+4[label="StructuredType"];
+4 -> 5[label="packed"];
+5[label="false"];
+4 -> 6[label="type"];
+6[label="ArrayType"];
+7[label="a"];
+6 -> 7[label="index_types[0]"];
+8[label="b"];
+6 -> 8[label="index_types[1]"];
+9[label="c"];
+6 -> 9[label="index_types[2]"];
+10[label="m"];
+6 -> 10[label="component_type"];
+}
+"
+`;
+
+exports[`TYPE t = FILE OF ARRAY [b,c] OF m 1`] = `
+"digraph graph1 {
+0[label="Program"];
+0 -> 1[label="blocks[0]"];
+1[label="TypeBlock"];
+1 -> 2[label="defs[0]"];
+2[label="TypeDefinition"];
+3[label="t"];
+2 -> 3[label="ident"];
+2 -> 4[label="type"];
+4[label="StructuredType"];
+4 -> 5[label="packed"];
+5[label="false"];
+4 -> 6[label="type"];
+6[label="FileType"];
+6 -> 7[label="type"];
+7[label="StructuredType"];
+7 -> 8[label="packed"];
+8[label="false"];
+7 -> 9[label="type"];
+9[label="ArrayType"];
+10[label="b"];
+9 -> 10[label="index_types[0]"];
+11[label="c"];
+9 -> 11[label="index_types[1]"];
+12[label="m"];
+9 -> 12[label="component_type"];
+}
+"
+`;
+
+exports[`TYPE t = FILE OF FILE OF FILE OF t 1`] = `
+"digraph graph1 {
+0[label="Program"];
+0 -> 1[label="blocks[0]"];
+1[label="TypeBlock"];
+1 -> 2[label="defs[0]"];
+2[label="TypeDefinition"];
+3[label="t"];
+2 -> 3[label="ident"];
+2 -> 4[label="type"];
+4[label="StructuredType"];
+4 -> 5[label="packed"];
+5[label="false"];
+4 -> 6[label="type"];
+6[label="FileType"];
+6 -> 7[label="type"];
+7[label="StructuredType"];
+7 -> 8[label="packed"];
+8[label="false"];
+7 -> 9[label="type"];
+9[label="FileType"];
+9 -> 10[label="type"];
+10[label="StructuredType"];
+10 -> 11[label="packed"];
+11[label="false"];
+10 -> 12[label="type"];
+12[label="FileType"];
+13[label="t"];
+12 -> 13[label="type"];
+}
+"
+`;
+
+exports[`TYPE t = SET OF 1..2 1`] = `
+"digraph graph1 {
+0[label="Program"];
+0 -> 1[label="blocks[0]"];
+1[label="TypeBlock"];
+1 -> 2[label="defs[0]"];
+2[label="TypeDefinition"];
+3[label="t"];
+2 -> 3[label="ident"];
+2 -> 4[label="type"];
+4[label="StructuredType"];
+4 -> 5[label="packed"];
+5[label="false"];
+4 -> 6[label="type"];
+6[label="SetType"];
+6 -> 7[label="base_type"];
+7[label="SubrangeType"];
+7 -> 8[label="start"];
+8[label="UnsignedConstant"];
+9[label="1"];
+8 -> 9[label="value"];
+7 -> 10[label="end"];
+10[label="UnsignedConstant"];
+11[label="2"];
+10 -> 11[label="value"];
+}
+"
+`;
+
+exports[`TYPE t = a (* графический и текстовый дисплеи *) 1`] = `
+"digraph graph1 {
+0[label="Program"];
+0 -> 1[label="blocks[0]"];
+1[label="TypeBlock"];
+1 -> 2[label="defs[0]"];
+2[label="TypeDefinition"];
+3[label="t"];
+2 -> 3[label="ident"];
+4[label="a"];
+2 -> 4[label="type"];
+}
+"
+`;
 
 exports[`a 123 (*323*()(
 

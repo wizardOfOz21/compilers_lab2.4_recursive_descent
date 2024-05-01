@@ -1,28 +1,124 @@
 import { Token } from "./token";
 
+export class TokenContainer {
+    constructor(public value: Token) {}
+}
+
 export class Program {
     constructor(public blocks: (TypeBlock | ConstantBlock)[]) {}
 }
 
-export class TypeBlock {}
+export class TypeBlock {
+    constructor(public defs: TypeDefinition[]) {}
+}
 
 export class ConstantBlock {
     constructor(public defs: ConstantDefinition[]) {}
 }
 
+export class TypeDefinition {
+    constructor(public ident: Token, public type: Type) {}
+}
 export class ConstantDefinition {
     constructor(public ident: Token, public constant: Constant) {}
 }
+
+export type Type = SimpleType | PointerType | StructuredType;
+
+export type SimpleType = ScalarType | SubrangeType | TypeIdent
+
+export class StructuredType {
+    constructor(
+        public packed: boolean,
+        public type: UnpackedStructuredType,
+    ) {}
+}
+
+export type UnpackedStructuredType = ArrayType | RecordType | FileType | SetType;
+
+export class ArrayType {
+    constructor(
+        public index_types: SimpleType[],
+        public component_type: Type,
+    ){}
+}
+
+export class FileType {
+    constructor(
+        public type: Type,
+    ){}
+}
+
+export class SetType {
+    constructor(
+        public base_type: SimpleType,
+    ){}
+}
+
+export class RecordType {
+    constructor(
+        public field_list: FieldList,
+    ){}
+}
+
+export class FieldList {
+    constructor(
+        public fixed_part: RecordFixedPart | null,
+        public variant_part: RecordVariantPart | null,
+    ){}
+}
+
+export class RecordFixedPart {
+    constructor(
+        public sections: RecordSection[],
+    ){}
+}
+
+export class RecordSection {
+    constructor(
+        public idents: Token[],
+        public type: Type,
+    ){}
+}
+
+export class RecordVariantPart {
+    constructor(
+        public tag_field: Token,
+        public type_ident: Token,
+        public variants: RecordVariant[],
+    ){}
+}
+
+export class RecordVariant {
+    constructor(
+        public const_label_list: CaseLabelList,
+        public field_list: FieldList,
+        public labe_list: CaseLabelList
+    ){}
+}
+
+export class CaseLabelList {
+    constructor(
+        public list: Token[],
+    ){}
+}
+
+export class ScalarType {
+    constructor(public types: Token[]) {};
+}
+
+export class SubrangeType {
+    constructor(public start: Constant, public end: Constant) {};
+}
+
+export class PointerType extends TokenContainer {}
+export class TypeIdent extends TokenContainer {}
 
 export type Constant =
     | SignedConstant
     | UnsignedConstant
     | StringConstant
     | NilConstant;
-
-export class TokenContainer {
-    constructor(public value: Token) {}
-}
 
 export class UnsignedConstant extends TokenContainer {}
 export class StringConstant extends TokenContainer {}
@@ -34,9 +130,12 @@ export class SignedConstant {
 
 export function printGraphRec(node, graph: {str: string, id: number}, parent?: number) {
     const id = graph.id++;
-    const className = node.constructor.name;
     const keys = Object.keys(node);
-    graph.str += `${id}[label="${className}"];\n`
+    let name = node.constructor.name;
+    if (name === 'Boolean') {
+        name = node;
+    }
+    graph.str += `${id}[label="${name}"];\n`
     for (let key of keys) {
         const prop = node[key];
         if (Array.isArray(prop)) {

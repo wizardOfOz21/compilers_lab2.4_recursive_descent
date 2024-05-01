@@ -1,6 +1,5 @@
+import { lms } from "./lexer";
 import { Position } from "./utils";
-export const EOF: string = "EOF";
-export const ERROR: string = "ERROR";
 
 export class Token {
     constructor(
@@ -14,11 +13,11 @@ export class Token {
     }
 
     isEof(): boolean {
-        return this.type === EOF;
+        return this.type === lms.EOF;
     }
 
     isError(): boolean {
-        return this.type === ERROR;
+        return this.type === lms.ERROR;
     }
 
     is(...domains: string[]): boolean {

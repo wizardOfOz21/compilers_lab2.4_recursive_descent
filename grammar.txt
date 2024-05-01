@@ -5,8 +5,7 @@ constant_block ::= 'CONST' constant_definition (; constant_definition?)*
 // Определение константы
 
 constant_definition ::= IDENT = constant
-constant ::= sign? (UNSIGNED_NUMBER | constant_ident) | STRING | 'NIL'
-constant_ident ::= IDENT
+constant ::= sign? UNSIGNED_NUMBER | STRING | 'NIL'
 sign ::= + | -
 
 // Определение типа

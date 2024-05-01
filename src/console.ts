@@ -16,6 +16,7 @@ rl.on('line', (line) => {
     printLexems(l);
     l = new Lexer(line, lexemDefinition);
     const p = new Parser(l);
-    // const prog = p.parse();
-    // console.log(printGrpah(prog));
+    const prog = p.parse();
+    console.log(prog);
+    console.log(printGrpah(prog));
 });

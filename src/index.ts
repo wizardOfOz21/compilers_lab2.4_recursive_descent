@@ -1,7 +1,7 @@
 import { lexemDefinition } from "./config";
 
 import Lexer, { printLexems } from "./lexer";
-import { Token, EOF, ERROR } from "./token";
+import { Token } from "./token";
 
 const fs = require("node:fs");
 

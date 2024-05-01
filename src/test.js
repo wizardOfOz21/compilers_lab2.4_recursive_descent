@@ -145,6 +145,16 @@ const parserTest = [
     "CONST A = - 1; B = + 5",
     "CONST a = 1; CONST b = 1e5",
     "CONST a = 1;;;",
+    "TYPE t = (a,b,c,d);;;;",
+    "CONST a = 1;;;TYPE t = (a,b,c,d);;;",
+    "TYPE t = -1..{dsadasd}4",
+    "TYPE t = a (* графический и текстовый дисплеи *)",
+    "TYPE t = ^a",
+    "TYPE t = SET OF 1..2",
+    "TYPE t = FILE OF FILE OF FILE OF t",
+    "TYPE t = ARRAY [a,b,c] OF m",
+    "TYPE t = FILE OF ARRAY [b,c] OF m"
+
 ]
 
 parserTest.forEach((input) => {
