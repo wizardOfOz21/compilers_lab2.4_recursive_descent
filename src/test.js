@@ -166,3 +166,17 @@ parserTest.forEach((input) => {
         expect(printGrpah(prog)).toMatchSnapshot();
     });
 })
+
+const testFiles = ["input.txt"]
+
+const fs = require("node:fs");
+
+testFiles.forEach((file) => {
+    test(file, () => {
+        let data = fs.readFileSync(file, "utf8");
+        let l = new Lexer(data, lexemDefinition);
+        const p = new Parser(l);
+        const prog = p.parse();
+        expect(printGrpah(prog)).toMatchSnapshot();
+    });
+});
